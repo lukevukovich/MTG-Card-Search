@@ -60,7 +60,11 @@ function App() {
 
         //Set num cards
         const cards = resultJson.data.length;
-        setNumCards(cards + " cards found for '" + cardName + "'");
+        if (cards == 1) {
+          setNumCards(cards + " card found for '" + cardName + "'");
+        } else {
+          setNumCards(cards + " cards found for '" + cardName + "'");
+        }
       } catch (error) {
           //Set num cards to none
           setNumCards("No cards found for '" + cardName + "'");
