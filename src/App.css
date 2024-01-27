@@ -4,19 +4,52 @@ body {
   padding: 0;
 }
 
-#search-panel {
+#header {
+  font-family: "Arial";
   width: 100%;
   margin-top: -120px;
   position: fixed;
   height: 100px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   background-color: rgb(27, 0, 78);
-  gap: 10px;
   padding: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+#search-panel {
+  position: static;
+  height: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 140px;
+}
+
+text {
+  color: rgb(245, 245, 245);
+}
+
+#heading {
+  font-size: 30px;
+  padding: 15px;
+  background-color: rgb(59, 27, 121);
+  border-radius: 25px;
+  text-wrap: nowrap;
+  position: static;
+  margin-left: 8px;
+}
+
+#num-cards {
+  font-size: 15px;
+  margin-right: 60px;
+  text-wrap: nowrap;
+  width: 100px;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
 }
 
 input {
@@ -32,15 +65,17 @@ input {
 }
 
 button {
-  font-size: 20px;
-  border-radius: 50px;
+  font-size: 18px;
+  border-radius: 20px;
   border: none;
-  width: 100px;
+  width: 40px;
   height: 35px;
   margin-right: 5px;
   margin-left: 5px;
-  background-color: rgb(59, 27, 121);
+  background-color: transparent;
   color: rgb(245, 245, 245);
+  text-align: center;
+  cursor: pointer;
 }
 
 button:hover {
@@ -66,6 +101,17 @@ button:active {
   width: 225px;
   border-radius: 13px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+#modal-text {
+  font-family: "Arial";
+  color: black;
+}
+
+#modal-button {
+  font-family: "Arial";
+  color: black;
 }
 
 ::-webkit-scrollbar {

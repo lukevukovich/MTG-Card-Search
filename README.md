@@ -4,8 +4,8 @@ Search Magic: The Gathering cards utilizing React JS and Scryfall
 # Features
 - Seach Scryfall API by card name
 - Display results as card images
+- Select card with modal pop-up
 
 # To Do
-- Display number of results
+- Display selected card info to modal
 - Search by different categories
-- Select card and view information
