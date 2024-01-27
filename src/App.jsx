@@ -24,7 +24,13 @@ function App() {
   const [modal, setModal] = useState(false);
 
   //Use state for selected card
-  const [selectedCard, setSelectedCard] = useState([]);
+  const [selectedCard, setSelectedCard] = useState({
+    name: "",
+    image_uris: {normal: ""},
+    type_line: "",
+    oracle_text: "",
+    mana_cost: ""
+  });
 
   //Handle card seach to Scryfall API
   const searchCard = async() => {
@@ -41,6 +47,19 @@ function App() {
         const removeCards = [];
         for (let i = 0; i < resultJson.data.length; i++) {
           try {
+            //Test if oracle_text is present
+            try {
+              const o_test = resultJson.data[i].oracle_text.split("\n");
+            } catch (error) {
+              //If not present, go through all card faces and add to oracle_text
+              const faces = resultJson.data[i].card_faces.length;
+              resultJson.data[i].oracle_text = "";
+              for (let j = 0; j < faces; j++) {
+                let face_text = resultJson.data[i].card_faces[j].oracle_text;
+                resultJson.data[i].oracle_text += " | " + face_text;
+              }
+              resultJson.data[i].oracle_text = resultJson.data[i].oracle_text.substring(3);
+            }
             images.push(resultJson.data[i].image_uris.normal)
           } catch (error) {
             removeCards.push(i);
@@ -93,6 +112,7 @@ function App() {
   //Set selected card and show modal
   function showCardDetails(index) {
     setSelectedCard(data[index]);
+    console.log(data[index]);
     setModal(true);
   }
 
@@ -113,7 +133,7 @@ function App() {
             backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay
           },
           content: {
-            width: '1000px',
+            width: '750px',
             height: '500px',
             margin: 'auto',
             borderRadius: '10px',
@@ -122,10 +142,22 @@ function App() {
           },
         }}
       >
-        <button id="modal-button" onClick={() => closeCardDetails()}>
-          <FontAwesomeIcon icon={faMultiply}/>
-        </button>
-        <text id="modal-text">{selectedCard.name}</text>
+        <div id="modal-header">
+          <div id="modal-heading">
+            <text id="modal-heading-name">{selectedCard.name.replace(new RegExp("//", 'g'), "|")}</text>
+            <text id="modal-heading-mana">{selectedCard.mana_cost.replace(new RegExp("//", 'g'), "|")}</text>
+          </div>
+          <button id="modal-button" onClick={() => closeCardDetails()}>
+            <FontAwesomeIcon icon={faMultiply}/>
+          </button>
+        </div>
+        <div id="modal-info">
+          <img id="modal-card" className="card-image" src={selectedCard.image_uris.normal}/>
+          <div id="modal-stats">
+            <text>{selectedCard.type_line.replace(new RegExp("//", 'g'), "|")}</text>
+            <text>{selectedCard.oracle_text.replace(new RegExp("\n", 'g'), "\n\n")}</text>
+          </div>
+        </div>
       </Modal>
     )
   }
