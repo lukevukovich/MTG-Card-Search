@@ -112,7 +112,7 @@ function App() {
             width: '1000px',
             height: '500px',
             margin: 'auto',
-            borderRadius: '8px',
+            borderRadius: '10px',
             boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
             backgroundColor: 'rgb(255, 251, 234)',
           },
