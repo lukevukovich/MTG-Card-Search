@@ -29,8 +29,52 @@ function App() {
     image_uris: {normal: ""},
     type_line: "",
     oracle_text: "",
-    mana_cost: ""
+    mana_cost: "",
+    flavor_text: ""
   });
+
+  const processData = (jsonData) => {
+    const images = [];
+    const removeCards = [];
+
+    for (let i = 0; i < jsonData.data.length; i++) {
+      try {
+        // Test if oracle_text is present
+        try {
+          jsonData.data[i].oracle_text.split("\n");
+        } catch (error) {
+          // If not present, go through all card faces and add to oracle_text
+          const faces = jsonData.data[i].card_faces.length;
+          jsonData.data[i].oracle_text = "";
+          for (let j = 0; j < faces; j++) {
+            let face_text = jsonData.data[i].card_faces[j].oracle_text;
+            jsonData.data[i].oracle_text += " | " + face_text;
+          }
+          jsonData.data[i].oracle_text = jsonData.data[i].oracle_text.substring(3);
+        }
+
+        //Text is flavor_text is present
+        try {
+          jsonData.data[i].flavor_text.split("\n");
+        } catch (error) {
+          jsonData.data[i].flavor_text = "";
+        }
+        images.push(jsonData.data[i].image_uris.normal);
+      } catch (error) {
+        removeCards.push(i);
+      }
+    }
+
+    // Remove cards without an image
+    for (let i = 0; i < removeCards.length; i++) {
+      jsonData.data.splice(removeCards[i], 1);
+    }
+
+    return {
+      images,
+      processedData: jsonData.data,
+    };
+  };
 
   //Handle card seach to Scryfall API
   const searchCard = async() => {
@@ -40,45 +84,18 @@ function App() {
       try {
         //Make request
         const response = await fetch(`https://api.scryfall.com/cards/search?q=name:${encodeURIComponent(cardName)}`);
-        const resultJson = await response.json();
+        const jsonData = await response.json();
 
-        //Iterate through data, get card image if possible
-        const images = [];
-        const removeCards = [];
-        for (let i = 0; i < resultJson.data.length; i++) {
-          try {
-            //Test if oracle_text is present
-            try {
-              const o_test = resultJson.data[i].oracle_text.split("\n");
-            } catch (error) {
-              //If not present, go through all card faces and add to oracle_text
-              const faces = resultJson.data[i].card_faces.length;
-              resultJson.data[i].oracle_text = "";
-              for (let j = 0; j < faces; j++) {
-                let face_text = resultJson.data[i].card_faces[j].oracle_text;
-                resultJson.data[i].oracle_text += " | " + face_text;
-              }
-              resultJson.data[i].oracle_text = resultJson.data[i].oracle_text.substring(3);
-            }
-            images.push(resultJson.data[i].image_uris.normal)
-          } catch (error) {
-            removeCards.push(i);
-          }
-        }
-
-        //Remove cards without an image
-        for (let i = 0; i < removeCards.length; i++) {
-          resultJson.data.splice(removeCards[i], 1);
-        }
+        const { images, processedData }  = processData(jsonData);
+        const cards = processedData.length;
 
         //Set data
-        setData(resultJson.data);
+        setData(processedData);
 
         //Set image list
         setImageList(images);
 
         //Set num cards
-        const cards = resultJson.data.length;
         if (cards == 1) {
           setNumCards(cards + " card found for '" + cardName + "'");
         } else {
@@ -112,7 +129,6 @@ function App() {
   //Set selected card and show modal
   function showCardDetails(index) {
     setSelectedCard(data[index]);
-    console.log(data[index]);
     setModal(true);
   }
 
@@ -156,6 +172,7 @@ function App() {
           <div id="modal-stats">
             <text>{selectedCard.type_line.replace(new RegExp("//", 'g'), "|")}</text>
             <text>{selectedCard.oracle_text.replace(new RegExp("\n", 'g'), "\n\n")}</text>
+            <text>{selectedCard.flavor_text}</text>
           </div>
         </div>
       </Modal>
